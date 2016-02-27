@@ -1,9 +1,9 @@
 {
   "name": "pouter",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Yet another javascript router. Minimalistic, universal, and framework agnostic.",
   "main": "lib/index.js",
-  "repository" : {
+  "repository": {
     "type": "git",
     "url": "https://github.com/tybro0103/pouter"
   },

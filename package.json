@@ -8,7 +8,7 @@
     "url": "https://github.com/tybro0103/pouter"
   },
   "scripts": {
-    "compile": "babel --presets es2015,stage-0 -d lib/ src/",
+    "compile": "babel -d lib/ src/",
     "prepublish": "npm run compile"
   },
   "keywords": [

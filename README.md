@@ -2,6 +2,8 @@
 
 Yet another javascript router. Minimalistic, universal, and framework agnostic.
 
+[![npm version](https://badge.fury.io/js/pouter.svg)](https://badge.fury.io/js/pouter)
+
 
 
 ## Basic Usage

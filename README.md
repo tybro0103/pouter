@@ -59,6 +59,21 @@ This stance is different than other popular routers which aim to automatically m
 
 
 
+## History & Navigation
+
+Client side routing is accomplished through the [history](https://github.com/reactjs/history) library. Pouter aims with work _with_ history, rather than abstracting it, so it should be included as a separate dependency. Since Pouter relies on history to listen for route changes, all client-side navigation should be [handled through history](https://github.com/reactjs/history/blob/master/docs/GettingStarted.md#navigation).
+
+```javascript
+// To minimize the build, only import the implementation you need, for most:
+import createHistory from 'history/lib/createBrowserHistory';
+
+// To navigate:
+history.push('/home');
+history.replace('/profile');
+```
+
+
+
 ## Detailed Usage
 
 ### Instantiating a Router
@@ -70,27 +85,59 @@ const router = new Router();
 
 ### Defining Routes
 
-  * `use(path, handler)` expects a path as a string and a handler function which will be invoked whenever the given path is encountered.
-  * Path strings are parsed and matched by library [path-parser](https://github.com/troch/path-parser).
-  * Note that only the path (not the query) will be matched, meaning that both URLs `'/foo'` and `'/foo?b=ar'` will be matched to route `'/foo'`. 
-
 ```javascript
 router.use('/posts', routeHandlerA);
 router.use('/posts/asdf', routeHandlerB); // note this is placed first or else it would be matched to /posts/:postId
 router.use('/posts/:postId', routeHandlerC);
 
 ```
+Path strings are parsed and matched by library [path-parser](https://github.com/troch/path-parser). Note that only the path (not the query) will be matched, meaning that both URLs `'/foo'` and `'/foo?b=ar'` will be matched to route `'/foo'`. 
 
-### History
-
-  * Client side routing is accomplished through the [history](https://github.com/reactjs/history) library.
-  * Pouter aims with work _with_ history, rather than abstracting it, so it should be included as a separate dependency.
-  * Since Pouter relies on history to listen for route changes, all client-side route changes will need to be triggered by history.
-  * To minimize the build, only import the implementation you need, for most:
+### Route Handlers
 
 ```javascript
-import createHistory from 'history/lib/createBrowserHistory'
+function routeHandlerA(done, location, context) {
+  // arbitrary data can be passed back, wich will be available in the routeFinish callback
+  done({some: 'arbitrary data'});
+};
+
+function routeHandlerB(done, location, context) {
+  // `redirect` is a reserved key to indicate that a redirect should happen
+  done({redirect: '/somewhere/else'});
+};
+
+function routeHandlerC(done, location, context) {
+  // `error` is a reserved key to indicate an error occured while handling route
+  done({error: 'error object here'});
+};
 ```
+Each route handler is passed 3 arguments: `done`, `location`, and `context`. Each handler must call `done` once and only once. `location` and `context` covered below.
+
+### Routing
+
+```javascript
+// on the server
+// routes just the given URL
+router.route(url, onRouteFinish);
+
+// on the client
+// listens for location changes and routes each one
+router.startRouting(history, onRouteFinish);
+```
+For both methods, Pouter finds the first route that matches the current location and invokes the corresponding route handler. Once the route handler is finished, the onRouteFinish callback is invoked.
+
+### Route Finish Callback
+
+...
+
+### Location
+
+...
+
+### Context
+
+...
+
 
 
 

@@ -4,12 +4,16 @@ Yet another javascript router. Minimalistic, universal, and framework agnostic.
 
 [![npm version](https://badge.fury.io/js/pouter.svg)](https://badge.fury.io/js/pouter)
 
+Pouter provides an elegant way to respond to route changes on both the server and the client. On the client, Pouter relies on and is intended to be used in conjunction with [history](https://github.com/reactjs/history).
+
+Pouter itself is a very small amount of code, and its only dependency is [path-parser](https://github.com/troch/path-parser), which is also very small with no dependencies. The instended usage with history does add a little more size.
+
 
 
 ## Basic Usage
 
 ```javascript
-/** Unverisal bits **/
+/** Universal bits **/
 import { Router } from 'pouter';
 const router = new Router();
 
@@ -29,7 +33,7 @@ app.get('*', (req, res, next) => {
 });
 
 /** On the client **/
-import createHistory from 'history/lib/createBrowserHistory';
+import { createHistory } from 'history';
 const history = createHistory();
 
 router.startRouting(history, (location, data, redirect, error) => {
@@ -52,4 +56,41 @@ To handle all this, each route is directed to a function, or “route handler”
 This stance is different than other popular routers which aim to automatically marry the route to a view or to the application’s state. Such approaches make the mentioned side effects at least very awkward, if not a poor separation of concerns. It puts all of the responsibility on the view itself. The view has to fetch its own data, check if itself is allowed to be viewed by the current user, and perform any redirects that might need to occur. Although this is possible and good architecture could allow it feel manageable, it seems as though there has a long been a place that is meant to handle these very concerns - the router.
 
 &#42;or just respond to a single route when speaking server-side.
+
+
+
+## Detailed Usage
+
+### Instantiating a Router
+
+```javascript
+import { Router } from 'pouter';
+const router = new Router();
+```
+
+### Defining Routes
+
+  * `use(path, handler)` expects a path as a string and a handler function which will be invoked whenever the given path is encountered.
+  * Path strings are parsed and matched by library [path-parser](https://github.com/troch/path-parser).
+  * Note that only the path (not the query) will be matched, meaning that both URLs `'/foo'` and `'/foo?b=ar'` will be matched to route `'/foo'`. 
+
+```javascript
+router.use('/posts', routeHandlerA);
+router.use('/posts/asdf', routeHandlerB); // note this is placed first or else it would be matched to /posts/:postId
+router.use('/posts/:postId', routeHandlerC);
+
+```
+
+### History
+
+  * Client side routing is accomplished through the [history](https://github.com/reactjs/history) library.
+  * Pouter aims with work _with_ history, rather than abstracting it, so it should be included as a separate dependency.
+  * Since Pouter relies on history to listen for route changes, all client-side route changes will need to be triggered by history.
+  * To minimize the build, only import the implementation you need, for most:
+
+```javascript
+import createHistory from 'history/lib/createBrowserHistory'
+```
+
+
 

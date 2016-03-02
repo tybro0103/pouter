@@ -8,6 +8,12 @@ Pouter provides an elegant way to respond to route changes on both the server an
 
 Pouter itself is a very small amount of code, and its only dependency is [path-parser](https://github.com/troch/path-parser), which is also very small with no dependencies. The instended usage with history does add a little more size.
 
+  * [Basic Usage](#basic-usage)
+  * [Reasoning](#reasoning)
+  * [History and Navigation](#history-and-navigation)
+  * [Detailed Usage](#detailed-usage)
+  * [Putting it Together](#putting-it-together)
+
 
 
 ## Basic Usage
@@ -59,7 +65,7 @@ This stance is different than other popular routers which aim to automatically m
 
 
 
-## History & Navigation
+## History and Navigation
 
 Client side routing is accomplished through the [history](https://github.com/reactjs/history) library. Pouter aims with work _with_ history, rather than abstracting it, so it should be included as a separate dependency. Since Pouter relies on history to listen for route changes, all client-side navigation should be [handled through history](https://github.com/reactjs/history/blob/master/docs/GettingStarted.md#navigation).
 
@@ -97,7 +103,7 @@ Path strings are parsed and matched by library [path-parser](https://github.com/
 
 ```javascript
 function routeHandlerA(done, location, context) {
-  // arbitrary data can be passed back, wich will be available in the routeFinish callback
+  // arbitrary data can be passed back, wich will be available in the onRouteFinish callback
   done({some: 'arbitrary data'});
 };
 
@@ -128,16 +134,141 @@ For both methods, Pouter finds the first route that matches the current location
 
 ### Route Finish Callback
 
-...
+```javascript
+// server side
+app.get('*', (req, res, next) => {
+  router.route(req.url, (location, data, redirect, error) => {
+
+    // when error is present, pass on to error handler
+    if (error) {
+      next(error);
+    }
+
+    // when redirect is present, perform a redirect
+    else if (redirect) {
+      res.redirect(redirect);
+    }
+
+    // when data is present, 200 ok
+    else if (data) {
+      res.send(data);
+    }
+
+    // when none of those are present, the route does not exist
+    else {
+      next();
+    }
+    
+  });
+});
+```
+
+The second argument to both `route()` and `startRouting()` is an onRouteFinish callback. It is invoked _after_ the route handler, and is passed 4 arguments: `location`, `data`, `redirect`, and `error`. `location` will always be present. Only one of `data`, `redirect`, or `error` will be present at a time, and this indicates the outcome of the route change. `data` will contain the object passed into `done()` by the route handler (unless there is an error or redirect).
 
 ### Location
 
-...
+```javascript
+// for route '/posts/:postId'
+// at URL '/posts/abc?foo=bar'
+// location will be:
+{
+  url: '/posts/abc?foo=bar',
+  path: '/posts/abc',
+  queryString: 'foo=bar',
+  query: {
+    foo: 'bar'
+  },
+  params: {
+    postId: 'abc'
+  }
+}
+```
+The location object is sent to both route handlers and the onRouteFinish callback.
 
 ### Context
 
-...
+```javascript
+// use `setContext()` to set a "context" object on the router
+router.setContext({foo: 'bar'});
+// and it will be passed to each route handler as the third argument
+router.use('/', (done, location, context) {
+  context.foo; // bar
+})
+```
 
 
 
+## Putting it Together
+
+##### /app/router.js
+```javascript
+import { Router } from 'pouter';
+import * as posts from './route-handlers/posts';
+export default function buildRouter(store) {
+  const router = new Router();
+  router.setContext({store}); // a redux store, for example
+  router.use('/posts', posts.index);
+  router.use('/posts/:postId', posts.show);
+  return router;
+};
+```
+##### /app/route-handlers/posts.js
+```javascript
+export function index(done, location, {store}) {
+  // in RL: dispatch action to fetch data; update store before calling done()
+  fetchPosts()
+    .then(() => done({page: 'posts-index'}))
+    .catch(error => done({error}));
+};
+export function show(done, {params: {postId}}, {store}) {
+  fetchPost(postId)
+    .then(() => done({page: 'post-show'}))
+    .catch(error => done({error}));
+};
+```
+##### /app/history.js
+```javascript
+// makes the history a singleton for the app... will need it in React components to navigate
+import createHistory from 'history/lib/createBrowserHistory';
+export default const history = __IS_CLIENT__ ? createHistory() : null;
+```
+##### /server/index.js
+```javascript
+import express from 'express';
+import buildRouter from '../app/router';
+import buildStore from '../app/store';
+const app = express();
+export default function(req, res, next) {
+  const store = buildStore();
+  const router = buildRouter(store);
+  // delegate to pouter
+  router.route(req.url, (location, data, redirect, error) => {
+    if (error) return next(error);
+    if (redirect) return res.redir
+    if (data) {
+      // update store with data.page
+      // render the view/component
+    }
+    next(); // not found
+  });
+};
+```
+##### /client/index.js
+```javascript
+import buildStore from '../app/store';
+import buildRouter from '../app/router';
+import history from '../app/history';
+const store = buildStore(initialState);
+const router = buildRouter(store);
+router.startRouting(history, (location, data, redirect, error) => {
+  if (error) return console.error(error);
+  if (redirect) return history.replace(redirect);
+  if (data) {
+    // update store with data.page
+  } else {
+    console.error('Route not found.');
+  }
+});
+// render view/component
+```
 

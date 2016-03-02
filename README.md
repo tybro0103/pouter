@@ -204,6 +204,7 @@ router.use('/', (done, location, context) {
 ```javascript
 import { Router } from 'pouter';
 import * as posts from './route-handlers/posts';
+
 export default function buildRouter(store) {
   const router = new Router();
   router.setContext({store}); // a redux store, for example
@@ -212,6 +213,7 @@ export default function buildRouter(store) {
   return router;
 };
 ```
+
 ##### /app/route-handlers/posts.js
 ```javascript
 export function index(done, location, {store}) {
@@ -226,18 +228,22 @@ export function show(done, {params: {postId}}, {store}) {
     .catch(error => done({error}));
 };
 ```
+
 ##### /app/history.js
 ```javascript
 // makes the history a singleton for the app... will need it in React components to navigate
 import createHistory from 'history/lib/createBrowserHistory';
 export default const history = __IS_CLIENT__ ? createHistory() : null;
 ```
+
 ##### /server/index.js
 ```javascript
 import express from 'express';
 import buildRouter from '../app/router';
 import buildStore from '../app/store';
+
 const app = express();
+
 app.use('*', (req, res, next) => {
   const store = buildStore();
   const router = buildRouter(store);
@@ -253,13 +259,16 @@ app.use('*', (req, res, next) => {
   });
 });
 ```
+
 ##### /client/index.js
 ```javascript
 import buildStore from '../app/store';
 import buildRouter from '../app/router';
 import history from '../app/history';
-const store = buildStore(initialState);
+
+const store = buildStore();
 const router = buildRouter(store);
+
 router.startRouting(history, (location, data, redirect, error) => {
   if (error) return console.error(error);
   if (redirect) return history.replace(redirect);

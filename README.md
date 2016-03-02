@@ -238,7 +238,7 @@ import express from 'express';
 import buildRouter from '../app/router';
 import buildStore from '../app/store';
 const app = express();
-export default function(req, res, next) {
+app.use('*', (req, res, next) => {
   const store = buildStore();
   const router = buildRouter(store);
   // delegate to pouter
@@ -251,7 +251,7 @@ export default function(req, res, next) {
     }
     next(); // not found
   });
-};
+});
 ```
 ##### /client/index.js
 ```javascript

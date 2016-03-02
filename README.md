@@ -23,10 +23,10 @@ Pouter itself is a very small amount of code, and its only dependency is [path-p
 import { Router } from 'pouter';
 const router = new Router();
 
-router.use('/', done => done.ok({page: 'home'}));
-router.use('/posts', done => done.ok({page: 'posts'}));
-router.use('/foo', done => done.redirect('/bar'));
-router.use('/oops', done => done.error({some: 'error'}));
+router.use('/', done => done({page: 'home'}));
+router.use('/posts', done => done({page: 'posts'}));
+router.use('/foo', done => done({redirect: '/bar'}));
+router.use('/oops', done => done({error: 'error here'}));
 
 /** On the server **/
 app.get('*', (req, res, next) => {

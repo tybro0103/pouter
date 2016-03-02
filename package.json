@@ -1,6 +1,6 @@
 {
   "name": "pouter",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Yet another javascript router. Minimalistic, universal, and framework agnostic.",
   "main": "lib/index.js",
   "repository": {

@@ -20,16 +20,6 @@ class Router {
     return this._routes.find(route => route.path.match(url, true));
   };
 
-  // builds the collection callbacks for the route to indicate its outcome
-  _buildDone(routeFinishCb) {
-    // point the outcome functions at the respective private handlers, pre-setting the finishCallback
-    return {
-      ok: this._handleDoneOk.bind(this, routeFinishCb),
-      error: this._handleDoneError.bind(this, routeFinishCb),
-      redirect: this._handleDoneRedirect.bind(this, routeFinishCb)
-    }
-  }
-
   _buildLocation(url, routePath) {
     const {path, query, queryString} = parseUrl(url);
     const params = routePath ? routePath.match(path, true) : {};
@@ -48,16 +38,10 @@ class Router {
    *  PRIVATE EVENTS
    */
 
-  _handleDoneOk(routeFinishCb, data={}) {
+  _handleDone(routeFinishCb, data) {
+    if (data.error) return routeFinishCb(null, null, data.error);
+    if (data.redirect) return routeFinishCb(null, data.redirect, null);
     routeFinishCb(data, null, null);
-  }
-
-  _handleDoneRedirect(routeFinishCb, url) {
-    routeFinishCb(null, url, null);
-  }
-
-  _handleDoneError(routeFinishCb, error) {
-    routeFinishCb(null, null, error);
   }
 
 
@@ -94,7 +78,7 @@ class Router {
     // when no route found, invoke callback without any args (no args indicates not found)
     if (!route) return routeFinishCb();
     // invoke the route
-    const done = this._buildDone(routeFinishCb);
+    const done = this._handleDone.bind(this, routeFinishCb);
     const context = this._context;
     route.handler(done, location, context);
   }

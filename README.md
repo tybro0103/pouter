@@ -6,7 +6,7 @@ Yet another javascript router. Minimalistic, universal, and framework agnostic.
 
 Pouter provides an elegant way to respond to route changes on both the server and the client. On the client, Pouter relies on and is intended to be used in conjunction with [history](https://github.com/reactjs/history).
 
-Pouter itself is a very small amount of code, and its only dependency is [path-parser](https://github.com/troch/path-parser), which is also very small with no dependencies. The instended usage with history does add a little more size.
+Pouter itself is a very small amount of code, and its only dependency is [path-parser](https://github.com/troch/path-parser), which is also very small with no dependencies. The intended usage with history does add a little more size.
 
   * [Basic Usage](#basic-usage)
   * [Reasoning](#reasoning)

@@ -13,6 +13,7 @@ Pouter itself is a very small amount of code, and its only dependency is [path-p
   * [History and Navigation](#history-and-navigation)
   * [Detailed Usage](#detailed-usage)
   * [Putting it Together](#putting-it-together)
+  * [Example Project](#example-project)
 
 
 
@@ -293,3 +294,15 @@ router.startRouting(history, (location, data, redirect, error) => {
 // render view/component
 ```
 
+
+
+## Example Project
+
+For a reference implementation check out [this repo](https://github.com/tybro0103/redux-universal-boilerplate). Particularly files:
+
+  * [app/router.js](https://github.com/tybro0103/redux-universal-boilerplate/blob/master/app/router.js)
+  * [app/route-handlers/*](https://github.com/tybro0103/redux-universal-boilerplate/tree/master/app/route-handlers)
+  * [app/history](https://github.com/tybro0103/redux-universal-boilerplate/blob/master/app/history.js)
+  * [app/components/routing/*](https://github.com/tybro0103/redux-universal-boilerplate/tree/master/app/components/common/routing)
+  * [client/index.js](https://github.com/tybro0103/redux-universal-boilerplate/blob/master/client/index.js)
+  * [server/app-router.js](https://github.com/tybro0103/redux-universal-boilerplate/blob/master/server/app-router.js)

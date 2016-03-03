@@ -62,13 +62,15 @@ class Router {
   }
 
   startRouting(history, routeFinishCb) {
+    let preRouted = true; // convenience on the client to know this route was already handled by server
     history.listen(location => {
       const url = `${location.pathname}${location.search}`
-      this.route(url, routeFinishCb);
+      this.route(url, routeFinishCb, preRouted);
+      preRouted = false;
     });
   }
 
-  route(url, routeFinishCb=()=>{}) {
+  route(url, routeFinishCb=()=>{}, preRouted=false) {
     // find corresponding route
     const path = parseUrl(url).path;
     const route = this._match(path);
@@ -80,7 +82,7 @@ class Router {
     // invoke the route
     const done = this._handleDone.bind(this, routeFinishCb);
     const context = this._context;
-    route.handler(done, location, context);
+    route.handler(done, location, context, preRouted);
   }
 
 };

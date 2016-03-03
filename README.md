@@ -102,22 +102,66 @@ Path strings are parsed and matched by library [path-parser](https://github.com/
 ### Route Handlers
 
 ```javascript
-function routeHandlerA(done, location, context) {
+function routeHandlerA(done, location, context, preRouted) {
   // arbitrary data can be passed back, wich will be available in the onRouteFinish callback
   done({some: 'arbitrary data'});
 };
 
-function routeHandlerB(done, location, context) {
+function routeHandlerB(done, location, context, preRouted) {
   // `redirect` is a reserved key to indicate that a redirect should happen
   done({redirect: '/somewhere/else'});
 };
 
-function routeHandlerC(done, location, context) {
+function routeHandlerC(done, location, context, preRouted) {
   // `error` is a reserved key to indicate an error occured while handling route
   done({error: 'error object here'});
 };
+
+function routeHandlerD(done, location, {store}, preRouted) {
+  // don't need to fetch data on client if the server already did
+  if (preRouted) return done();
+  //
+  const postId = location.params.postId;
+  store.dispatch(fetchPost(postId)).promise
+    .then(() => done())
+    .catch(error => done({error}));
+};
 ```
-Each route handler is passed 3 arguments: `done`, `location`, and `context`. Each handler must call `done` once and only once. `location` and `context` covered below.
+  * Each route handler is passed 4 arguments: `done`, `location`, `context`, and `preRouted`.
+  * Each handler must call `done` once and only once.
+  * `preRouted` is true only for the first route on client and is a convenient way to know that the server already handled the route.
+  * `location` and `context` covered below.
+
+### Location
+
+```javascript
+// for route '/posts/:postId'
+// at URL '/posts/abc?foo=bar'
+// location will be:
+{
+  url: '/posts/abc?foo=bar',
+  path: '/posts/abc',
+  queryString: 'foo=bar',
+  query: {
+    foo: 'bar'
+  },
+  params: {
+    postId: 'abc'
+  }
+}
+```
+The location object is sent to both route handlers and the onRouteFinish callback.
+
+### Context
+
+```javascript
+// use `setContext()` to set a "context" object on the router
+router.setContext({foo: 'bar'});
+// and it will be passed to each route handler as the third argument
+router.use('/', (done, location, context) {
+  context.foo; // bar
+})
+```
 
 ### Routing
 
@@ -162,39 +206,7 @@ app.get('*', (req, res, next) => {
   });
 });
 ```
-
 The second argument to both `route()` and `startRouting()` is an onRouteFinish callback. It is invoked _after_ the route handler, and is passed 4 arguments: `location`, `data`, `redirect`, and `error`. `location` will always be present. Only one of `data`, `redirect`, or `error` will be present at a time, and this indicates the outcome of the route change. `data` will contain the object passed into `done()` by the route handler (unless there is an error or redirect).
-
-### Location
-
-```javascript
-// for route '/posts/:postId'
-// at URL '/posts/abc?foo=bar'
-// location will be:
-{
-  url: '/posts/abc?foo=bar',
-  path: '/posts/abc',
-  queryString: 'foo=bar',
-  query: {
-    foo: 'bar'
-  },
-  params: {
-    postId: 'abc'
-  }
-}
-```
-The location object is sent to both route handlers and the onRouteFinish callback.
-
-### Context
-
-```javascript
-// use `setContext()` to set a "context" object on the router
-router.setContext({foo: 'bar'});
-// and it will be passed to each route handler as the third argument
-router.use('/', (done, location, context) {
-  context.foo; // bar
-})
-```
 
 
 

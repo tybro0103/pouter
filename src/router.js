@@ -38,7 +38,7 @@ class Router {
    *  PRIVATE EVENTS
    */
 
-  _handleDone(routeFinishCb, data) {
+  _handleDone(routeFinishCb, data={}) {
     if (data.error) return routeFinishCb(null, null, data.error);
     if (data.redirect) return routeFinishCb(null, data.redirect, null);
     routeFinishCb(data, null, null);

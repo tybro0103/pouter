@@ -16,8 +16,8 @@ class Router {
    */
 
   _match(url) {
-    // TODO: ditch find() for better compatibility
-    return this._routes.find(route => route.path.match(url, true));
+    const matchPredicate = route => route.path.match(url, true);
+    return this._routes.filter(matchPredicate)[0];
   };
 
   _buildLocation(url, routePath) {
@@ -96,7 +96,6 @@ const parseUrl = function(url) {
   const parts = url.split('?');
   const path = parts[0];
   const queryString = (parts[1] || '');
-  // TODO: ditch map() and reduce() for better compatibility
   const query = queryString.split('&')
     .map(part => part.split('='))
     .reduce((query, kvParts) => {

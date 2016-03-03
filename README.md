@@ -302,7 +302,7 @@ For a reference implementation check out [this repo](https://github.com/tybro010
 
   * [app/router.js](https://github.com/tybro0103/redux-universal-boilerplate/blob/master/app/router.js)
   * [app/route-handlers/*](https://github.com/tybro0103/redux-universal-boilerplate/tree/master/app/route-handlers)
-  * [app/history](https://github.com/tybro0103/redux-universal-boilerplate/blob/master/app/history.js)
-  * [app/components/routing/*](https://github.com/tybro0103/redux-universal-boilerplate/tree/master/app/components/common/routing)
+  * [app/history.js](https://github.com/tybro0103/redux-universal-boilerplate/blob/master/app/history.js)
+  * [app/components/common/routing/*](https://github.com/tybro0103/redux-universal-boilerplate/tree/master/app/components/common/routing)
   * [client/index.js](https://github.com/tybro0103/redux-universal-boilerplate/blob/master/client/index.js)
   * [server/app-router.js](https://github.com/tybro0103/redux-universal-boilerplate/blob/master/server/app-router.js)

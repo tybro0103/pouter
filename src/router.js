@@ -1,8 +1,10 @@
 import Path from 'path-parser';
 
+import { parseUrl } from './utils';
 
 
-class Router {
+
+export default class Router {
 
   constructor() {
     this._routes = [];
@@ -86,31 +88,3 @@ class Router {
   }
 
 };
-
-
-
-/*
- *  UTILS
- */
-
-// breaks given url into path, queryString, and query object
-const parseUrl = function(url) {
-  const parts = url.split('?');
-  const path = parts[0];
-  const queryString = (parts[1] || '');
-  const query = queryString.split('&')
-    .map(part => part.split('='))
-    .reduce((query, kvParts) => {
-      return {...query, [kvParts[0]]: kvParts[1]};
-    }, {});
-
-  return {
-    path,
-    queryString,
-    query
-  }
-}
-
-
-
-export default Router;

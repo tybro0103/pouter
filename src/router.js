@@ -17,14 +17,14 @@ export default class Router {
    *  PRIVATE HELPERS
    */
 
-  _match(url) {
-    const matchPredicate = route => route.path.match(url, true);
+  _match(path) {
+    const matchPredicate = route => route.pattern.match(path, true);
     return this._routes.filter(matchPredicate)[0];
   };
 
-  _buildLocation(url, routePath) {
+  _buildLocation(url, pattern) {
     const {path, query, queryString} = parseUrl(url);
-    const params = routePath ? routePath.match(path, true) : {};
+    const params = pattern ? pattern.match(path, true) : {};
     return {
       url,
       path,
@@ -56,9 +56,9 @@ export default class Router {
     this._context = context;
   }
 
-  use(path, handler) {
+  use(pattern, handler) {
     this._routes.push({
-      path: new Path(path),
+      pattern: new Path(pattern),
       handler
     });
   }
@@ -76,11 +76,11 @@ export default class Router {
     // find corresponding route
     const path = parseUrl(url).path;
     const route = this._match(path);
-    const location = this._buildLocation(url, route && route.path);
+    const location = this._buildLocation(url, route && route.pattern);
     // first arg to finishCallback will always be location, regardless of outcome
     routeFinishCb = routeFinishCb.bind(this, location);
     // when no route found, invoke callback without any args (no args indicates not found)
-    if (!route) return routeFinishCb();
+    if (!route) return routeFinishCb(null, null, null);
     // invoke the route
     const done = this._handleDone.bind(this, routeFinishCb);
     const context = this._context;

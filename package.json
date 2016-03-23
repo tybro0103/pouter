@@ -23,7 +23,7 @@
     "simple"
   ],
   "author": "Tyler Brown <tyler@tybro.io> (http://tyler.tybro.io/)",
-  "license": "MIT",
+  "license": "BSD-3-Clause",
   "devDependencies": {
     "babel-cli": "^6.5.1",
     "babel-preset-es2015": "^6.5.0",

@@ -58,11 +58,11 @@ router.startRouting(history, (location, data, redirect, error) => {
 
 ## Reasoning
 
-Pouter takes the stance that a router is responsible for handling route changes&#42;. Handling a route change can mean more than just changing the view or changing the application’s state. Although both of those things **should indeed** happen, there are also side effects to be considered. Some things to need happen before the new view is rendered - fetch data, check permissions, authorize, etc. But perhaps most importantly, there are times it will determined that the view should not be rendered, but instead a redirect should occur.
+Pouter takes the stance that a router is responsible for handling route changes&#42;. Handling a route change can mean more than just changing the view or changing the application’s state. Although both of those things **should indeed** happen, there are also side effects to be considered. Some things need to happen before the new view is rendered - fetch data, check permissions, authorize, etc. But, perhaps most importantly, there are times when the view should not be rendered at all, and instead a redirect should occur.
 
-To handle all this, each route is directed to a function, or “route handler”, to execute any arbitrary code you need it to. This is not so different from backbone router (or many other “old school” routers), except that the route handler is expected to indicate its outcome as one of: ok, error, or redirect. This enables Pouter to have a `routeFinish` callback where both the client and the server can have a place to actually perform a redirect, render a view, or handle an error ...after any side effects are triggered by the route handler. 
+To handle all this, each route is directed to a function (or “route handler”) to execute any arbitrary code you need it to. This is not so different from backbone router (or many other “old school” routers), except that the route handler is expected to indicate its outcome as one of: ok, error, or redirect. This enables Pouter to have a `routeFinish` callback where both the client and the server have a place to perform a redirect, render a view, or handle an error... after any side effects are triggered by the route handler.
 
-This stance is different than other popular routers which aim to automatically marry the route to a view or to the application’s state. Such approaches make the mentioned side effects at least very awkward, if not a poor separation of concerns. It puts all of the responsibility on the view itself. The view has to fetch its own data, check if itself is allowed to be viewed by the current user, and perform any redirects that might need to occur. Although this is possible and good architecture could allow it feel manageable, it seems as though there has a long been a place that is meant to handle these very concerns - the router.
+This stance differs from other popular routers which aim to automatically marry the route to a view or to the application’s state. That approach makes the mentioned side effects at least very awkward, if not a poor separation of concerns; it puts all of the responsibility on the view itself. The view has to fetch its own data, check if it is allowed to be viewed by the current user, and perform any necessary redirects. Although this is possible and solid architecture could make it feel manageable, it seems as though there has long been a place that is meant to handle these very concerns - the router.
 
 &#42;or just respond to a single route when speaking server-side.
 
@@ -70,7 +70,7 @@ This stance is different than other popular routers which aim to automatically m
 
 ## History and Navigation
 
-Client side routing is accomplished through the [history](https://github.com/reactjs/history) library. Pouter aims with work _with_ history, rather than abstracting it, so it should be included as a separate dependency. Since Pouter relies on history to listen for route changes, all client-side navigation should be [handled through history](https://github.com/reactjs/history/blob/master/docs/GettingStarted.md#navigation).
+Client side routing is accomplished through the [history](https://github.com/reactjs/history) library. Pouter aims to work _with_ history, rather than abstract it, so it should be included as a separate dependency. Since Pouter relies on history to listen for route changes, all client-side navigation should be [handled through history](https://github.com/reactjs/history/blob/master/docs/GettingStarted.md#navigation).
 
 ```javascript
 // To minimize the build, only import the implementation you need, for most:
@@ -100,7 +100,7 @@ router.use('/posts/asdf', routeHandlerB); // note this is placed first or else i
 router.use('/posts/:postId', routeHandlerC);
 
 ```
-Path strings are parsed and matched by library [path-parser](https://github.com/troch/path-parser). Note that only the path (not the query) will be matched, meaning that both URLs `'/foo'` and `'/foo?b=ar'` will be matched to route `'/foo'`. 
+Path strings are parsed and matched by library [path-parser](https://github.com/troch/path-parser). Note that only the path (not the query) will be matched, meaning that both URLs `'/foo'` and `'/foo?b=ar'` will be matched to route `'/foo'`.
 
 ### Route Handlers
 
@@ -205,7 +205,7 @@ app.get('*', (req, res, next) => {
     else {
       next();
     }
-    
+
   });
 });
 ```

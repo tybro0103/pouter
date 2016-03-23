@@ -3,7 +3,7 @@
 Yet another javascript router. Minimalistic, universal, and framework agnostic.
 
 [![npm version](https://badge.fury.io/js/pouter.svg)](https://badge.fury.io/js/pouter)
-[![Build Status](https://travis-ci.org/tybro0103/pouter.svg?branch=master)](https://travis-ci.org/tybro0103/pouter)
+[![Build Status](https://travis-ci.org/statmuse/pouter.svg?branch=master)](https://travis-ci.org/statmuse/pouter)
 [![Coverage Status](https://coveralls.io/repos/github/tybro0103/pouter/badge.svg?branch=master)](https://coveralls.io/github/tybro0103/pouter?branch=master)
 
 Pouter provides an elegant way to respond to route changes on both the server and the client. On the client, Pouter relies on and is intended to be used in conjunction with [history](https://github.com/reactjs/history).

@@ -5,7 +5,7 @@
   "main": "lib/index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/tybro0103/pouter"
+    "url": "https://github.com/statmuse/pouter"
   },
   "scripts": {
     "compile": "babel -d lib/ src/",

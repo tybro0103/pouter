@@ -7,7 +7,9 @@ export const parseUrl = function(url) {
     ? queryString.split('&')
         .map(part => part.split('='))
         .reduce((query, kvParts) => {
-          return {...query, [kvParts[0]]: kvParts[1]};
+          const decodedKey = decodeURIComponent(kvParts[0]);
+          const decodedVal = decodeURIComponent(kvParts[1]);
+          return {...query, [decodedKey]: decodedVal};
         }, {})
     : {};
 

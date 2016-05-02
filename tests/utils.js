@@ -21,6 +21,11 @@ describe('utils', function() {
       parsed.queryString.should.equal('');
       parsed.query.should.eql({});
     });
+
+    it('decodes query parts', function() {
+      const parsed = utils.parseUrl('/taco?meat%20ingredients=chorizo%20barbacoa%20steak');
+      parsed.query.should.eql({'meat ingredients': 'chorizo barbacoa steak'});
+    });
   });
 
 });

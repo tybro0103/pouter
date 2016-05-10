@@ -4,11 +4,12 @@ export const parseUrl = function(url) {
   const path = parts[0];
   const queryString = (parts[1] || '');
   const query = queryString.length > 0
-    ? queryString.split('&')
+    ? queryString
+        .split('&')
         .map(part => part.split('='))
         .reduce((query, kvParts) => {
-          const decodedKey = decodeURIComponent(kvParts[0]);
-          const decodedVal = decodeURIComponent(kvParts[1]);
+          const decodedKey = decodeURIComponent(kvParts.shift());
+          const decodedVal = decodeURIComponent(kvParts.join('='));
           return {...query, [decodedKey]: decodedVal};
         }, {})
     : {};

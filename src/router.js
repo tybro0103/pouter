@@ -9,6 +9,7 @@ export default class Router {
   constructor() {
     this._routes = [];
     this._context = {};
+    this._latestRouteFinishCb = null;
   }
 
 
@@ -41,6 +42,10 @@ export default class Router {
    */
 
   _handleDone(routeFinishCb, data={}) {
+    // ignore if not the latest
+    const isLatest = routeFinishCb === this._latestRouteFinishCb;
+    if (!isLatest) return;
+    //
     if (data.error) return routeFinishCb(null, null, data.error);
     if (data.redirect) return routeFinishCb(null, data.redirect, null);
     routeFinishCb(data, null, null);
@@ -79,6 +84,8 @@ export default class Router {
     const location = this._buildLocation(url, route && route.pattern);
     // first arg to finishCallback will always be location, regardless of outcome
     routeFinishCb = routeFinishCb.bind(this, location);
+    // update reference to latestRouteFinishCb for later
+    this._latestRouteFinishCb = routeFinishCb;
     // when no route found, invoke callback without any args (no args indicates not found)
     if (!route) return routeFinishCb(null, null, null);
     // invoke the route

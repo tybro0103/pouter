@@ -64,28 +64,34 @@ describe('Router', function() {
     });
 
     describe('_handleDone', function() {
-      it('invokes callback with error when error key is present', function() {
+      it('invokes callback with error when error key is present', function(done) {
         const cb = function(data, redirect, error) {
           expect(data).to.equal(null);
           expect(redirect).to.equal(null);
           expect(error).to.equal('asdf');
+          done();
         };
+        this.router._latestRouteFinishCb = cb;
         this.router._handleDone(cb, {error: 'asdf', foo: 'bar'});
       });
-      it('invokes callback with redirect when redirect key is present', function() {
+      it('invokes callback with redirect when redirect key is present', function(done) {
         const cb = function(data, redirect, error) {
           expect(data).to.equal(null);
           expect(redirect).to.equal('/burritoville');
           expect(error).to.equal(null);
+          done();
         };
+        this.router._latestRouteFinishCb = cb;
         this.router._handleDone(cb, {redirect: '/burritoville'});
       });
-      it('invokes callback with data no redirect or error key is present', function() {
+      it('invokes callback with data no redirect or error key is present', function(done) {
         const cb = function(data, redirect, error) {
           expect(data).to.eql({salsa: 'verde'});
           expect(redirect).to.equal(null);
           expect(error).to.equal(null);
+          done();
         };
+        this.router._latestRouteFinishCb = cb;
         this.router._handleDone(cb, {salsa: 'verde'});
       });
     });
@@ -173,6 +179,20 @@ describe('Router', function() {
       });
     });
 
+  });
+
+  describe('behavior', function() {
+    it('only handles the latest route', function(done) {
+      this.router.use('/fast-first', function(dun) { setTimeout(dun, 20) });
+      this.router.use('/slow-second', function(dun) { setTimeout(dun, 40) });
+
+      this.router.route('/fast-first', function() {
+        throw(Error('routeFinish was called for route that is not current route'));
+      });
+      this.router.route('/slow-second', function() {
+        done();
+      });
+    });
   });
 
 });

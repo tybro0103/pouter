@@ -75,6 +75,12 @@ export default class Router {
       this.route(url, routeFinishCb, preRouted);
       preRouted = false;
     });
+    // immediately invoke if on client - was done by history in previous versions
+    if (typeof window !== 'undefined') {
+      const url = `${window.location.pathname}${window.location.search}`;
+      this.route(url, routeFinishCb, preRouted);
+      preRouted = false;
+    }
   }
 
   route(url, routeFinishCb=()=>{}, preRouted=false) {

@@ -2,8 +2,6 @@ import Path from 'path-parser';
 
 import { parseUrl } from './utils';
 
-
-
 export default class Router {
 
   constructor() {
@@ -11,8 +9,6 @@ export default class Router {
     this._context = {};
     this._latestRouteFinishCb = null;
   }
-
-
 
   /*
    *  PRIVATE HELPERS
@@ -35,8 +31,6 @@ export default class Router {
     };
   }
 
-
-
   /*
    *  PRIVATE EVENTS
    */
@@ -50,8 +44,6 @@ export default class Router {
     if (data.redirect) return routeFinishCb(null, data.redirect, null);
     routeFinishCb(data, null, null);
   }
-
-
 
   /*
    *  PUBLIC API
